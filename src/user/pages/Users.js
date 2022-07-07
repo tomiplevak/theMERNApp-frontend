@@ -1,19 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 
-import UsersList from '../components/UsersList';
+import UsersList from "../components/UsersList";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const Users = () => {
-  const USERS = [
-    {
-      id: 'u1',
-      name: 'Tomas Plevak',
-      image:
-      'https://scontent.faep9-1.fna.fbcdn.net/v/t1.6435-9/32235631_10216222113409278_4506744222036000768_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=09cbfe&_nc_eui2=AeGxhXZKaqBrmfbn-RKBjmaGGfIgmAJSlPYZ8iCYAlKU9va5d84cxfUW1etep4ufuRU&_nc_ohc=XmLkQnhmiwsAX9ColmA&_nc_ht=scontent.faep9-1.fna&oh=00_AT_Mg-ZtC02wcDNVMazH_LstBOy-RfdRtCBtqxxUyY6TBQ&oe=62BB2853',
-      places: 3
-    }
-  ];
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [loadedUsers, setLoadedUsers] = useState();
 
-  return <UsersList items={USERS} />;
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const responseData = await sendRequest(
+        "https://plvk-mern.herokuapp.com/api/users"
+        );
+
+        setLoadedUsers(responseData.users);
+      } catch (err) {}
+    };
+    fetchUsers();
+  }, [sendRequest]);
+
+  return (
+    <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner />
+        </div>
+      )}
+      {!isLoading && loadedUsers && <UsersList items={loadedUsers} />}
+    </React.Fragment>
+  );
 };
 
 export default Users;

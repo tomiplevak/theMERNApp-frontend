@@ -1,2 +1,5 @@
 # theMERNApp
- stack: Mongo Db for Database, Express and Node Js for Backend, React Js for Frontend. 
+Frontend builded with React Js - Backend with Express and Node Js - Mongo Db for Database.
+
+This app works as a Travel Record.
+
